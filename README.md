@@ -1,3 +1,15 @@
+# How to put your progress here
+Go to your terminal app on your macbook:
+
+`git add *` - updates all your changes
+
+`git commit -m [MESSAGE]` - you add a message to update your progress
+
+`git push` - puts it on Github
+
+Feel free to come talk to me if it doesn't work - Simon Lee
+
+---
 # Benchmarking Foundation Models on Antibiotic Susceptibility
 
 ---
