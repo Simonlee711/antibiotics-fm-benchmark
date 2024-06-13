@@ -31,6 +31,7 @@ The rise of antibiotic-resistant bacteria has been identified as a critical glob
 | Bio-Megatron | https://huggingface.co/EMBO/BioMegatron345mUncased |
 | LinkBERT  | https://huggingface.co/michiyasunaga/LinkBERT-large  |
 | distil-bert  | https://huggingface.co/docs/transformers/en/model_doc/distilbert  |
+| clinicalt5 | https://huggingface.co/xyla/Clinical-T5-Large |
 
 
 
