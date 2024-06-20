@@ -1,4 +1,7 @@
 # How to put your progress here
+
+Helio Was here!
+
 Go to your terminal app on your macbook:
 
 `git add *` - updates all your changes
