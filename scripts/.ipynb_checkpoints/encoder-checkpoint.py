@@ -22,4 +22,5 @@ def encode_texts(model_name, texts):
             output = model(**encoded_input)
             cls_embedding = output.last_hidden_state[:, 0, :]
             embeddings.append(cls_embedding.cpu().numpy())
+    print("embeddings are generated")
     return np.vstack(embeddings)

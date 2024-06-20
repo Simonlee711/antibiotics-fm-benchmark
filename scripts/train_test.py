@@ -18,6 +18,7 @@ def evaluate_antibiotics(X_train, X_test, train, test, antibiotics):
     """
     results = {}
     for antibiotic in antibiotics:
+        print(f"Evaluating: {antibiotic}")
         y_train = train[antibiotic].astype(int)
         y_test = test[antibiotic].astype(int)
         
