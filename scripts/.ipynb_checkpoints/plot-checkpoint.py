@@ -107,11 +107,34 @@ def plot_auprc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20))
     plt.tight_layout()
     plt.show()
 
-def calculate_confidence_interval(tpr):
+import numpy as np
+from scipy.stats import t
+
+def calculate_confidence_interval(precision):
     """
-    Dummy function to calculate confidence intervals for TPR.
-    Replace with actual calculation method.
+    Calculates the 95% confidence interval for an array of precision values.
+
+    Parameters:
+    - precision: numpy array of precision values
+
+    Returns:
+    - Tuple of numpy arrays (ci_lower, ci_upper)
     """
-    ci_lower = tpr - 0.05  # Dummy values for example purposes
-    ci_upper = tpr + 0.05
-    return np.maximum(0, ci_lower), np.minimum(1, ci_upper)
+    precision = np.array(precision)
+    mean = np.mean(precision)
+    sem = np.std(precision, ddof=1) / np.sqrt(len(precision))  # Standard Error of the Mean
+    confidence_level = 0.95
+    degrees_of_freedom = len(precision) - 1
+
+    # Calculate t-critical for two-tailed test
+    t_critical = t.ppf((1 + confidence_level) / 2, degrees_of_freedom)
+
+    # Calculate margin of error
+    margin_of_error = t_critical * sem
+
+    # Lower and upper confidence intervals
+    ci_lower = mean - margin_of_error
+    ci_upper = mean + margin_of_error
+
+    return ci_lower, ci_upper
+
