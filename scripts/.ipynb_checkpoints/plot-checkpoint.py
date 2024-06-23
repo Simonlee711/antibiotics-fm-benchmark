@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.stats import t
 
 def plot_roc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20)):
     """
@@ -27,23 +28,28 @@ def plot_roc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20)):
         row, col = divmod(i, cols)
         ax = axs[row, col]
         
-        for dictionary, name in dictionaries:
-            results = dictionary[antibiotic]['Test Metrics']
-            fpr, tpr = results['fpr'], results['tpr']
-            roc_auc = results['ROC AUC']
-            
-            # Assuming calculate_confidence_interval is a function that returns lower and upper confidence intervals
-            ci_lower_tpr, ci_upper_tpr = calculate_confidence_interval(tpr)
+        # Gather all TPR (True Positive Rate) and FPR (False Positive Rate) data for this antibiotic to calculate confidence intervals
+        all_tpr = [dictionary[antibiotic]['Test Metrics']['tpr'] for dictionary, _ in dictionaries]
+        all_fpr = [dictionary[antibiotic]['Test Metrics']['fpr'] for dictionary, _ in dictionaries]
+
+        mean_fpr = np.linspace(0, 1, 100)  # Common FPR grid
+        interp_tpr = [np.interp(mean_fpr, fpr, tpr) for fpr, tpr in zip(all_fpr, all_tpr)]
+        
+        ci_lower, ci_upper = calculate_confidence_interval_curves(interp_tpr)
+        
+        for idx, (dictionary, name) in enumerate(dictionaries):
+            tpr, fpr = dictionary[antibiotic]['Test Metrics']['tpr'], dictionary[antibiotic]['Test Metrics']['fpr']
+            roc_auc = dictionary[antibiotic]['Test Metrics']['ROC AUC']
             
             # Plot ROC curve
             line_color = model_colors[name]
-            ax.plot(fpr, tpr, label=f'{name} (ROC AUC = {roc_auc:.4f})', color=line_color)
+            ax.plot(fpr, tpr, linestyle='--', color=line_color, label=f'{name} (ROC AUC = {roc_auc:.4f})')
             
-            # Fill between for confidence intervals using the same color
-            ax.fill_between(fpr, ci_lower_tpr, ci_upper_tpr, color=line_color, alpha=0.3)
+        # Fill between for confidence intervals using a neutral color
+        ax.fill_between(mean_fpr, ci_lower, ci_upper, color='grey', alpha=0.3)
         
         # Set plot details
-        ax.legend(loc='upper left')
+        ax.legend(loc='best')
         ax.set_title(f'{antibiotic} - ROC Curves')
         ax.set_xlabel('False Positive Rate')
         ax.set_ylabel('True Positive Rate')
@@ -53,7 +59,7 @@ def plot_roc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20)):
     # Adjust layout to prevent overlap
     plt.tight_layout()
     plt.show()
-    
+
 def plot_auprc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20)):
     """
     Plots AUPRC curves for multiple models and antibiotics.
@@ -80,20 +86,22 @@ def plot_auprc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20))
         row, col = divmod(i, cols)
         ax = axs[row, col]
         
-        for dictionary, name in dictionaries:
+        # Gather all precision data for this antibiotic to calculate confidence intervals
+        all_precision = [dictionary[antibiotic]['Test Metrics']['precision'] for dictionary, _ in dictionaries]
+        
+        ci_lower, ci_upper = calculate_confidence_interval_curves(all_precision)
+        
+        for idx, (dictionary, name) in enumerate(dictionaries):
             results = dictionary[antibiotic]['Test Metrics']
             precision, recall = results['precision'], results['recall']
-            auprc = results['auprc']
-            
-            # Assuming calculate_confidence_interval is a function that returns lower and upper confidence intervals
-            ci_lower, ci_upper = calculate_confidence_interval(precision)
+            auprc = results['PRC AUC']
             
             # Plot Precision-Recall curve
             line_color = model_colors[name]
             ax.plot(recall, precision, linestyle='--', color=line_color, label=f'{name} (PR AUC = {auprc:.4f})')
             
-            # Fill between for confidence intervals using the same color
-            ax.fill_between(recall, ci_lower, ci_upper, color=line_color, alpha=0.3)
+        # Fill between for confidence intervals using a neutral color
+        ax.fill_between(recall, ci_lower, ci_upper, color='grey', alpha=0.3)
         
         # Set plot details
         ax.legend(loc='best')
@@ -107,34 +115,32 @@ def plot_auprc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20))
     plt.tight_layout()
     plt.show()
 
-import numpy as np
-from scipy.stats import t
 
-def calculate_confidence_interval(precision):
+def calculate_confidence_interval_curves(values):
     """
-    Calculates the 95% confidence interval for an array of precision values.
+    Calculates the 95% confidence intervals for an array of value arrays (e.g., multiple TPR curves).
 
     Parameters:
-    - precision: numpy array of precision values
+    - values: List of numpy arrays (each array is a curve like TPR or precision)
 
     Returns:
-    - Tuple of numpy arrays (ci_lower, ci_upper)
+    - Tuple of numpy arrays (ci_lower, ci_upper) for each point on the curve
     """
-    precision = np.array(precision)
-    mean = np.mean(precision)
-    sem = np.std(precision, ddof=1) / np.sqrt(len(precision))  # Standard Error of the Mean
+    values = np.array(values)
+    mean_values = np.mean(values, axis=0)
+    sem = np.std(values, axis=0, ddof=1) / np.sqrt(values.shape[0])  # Standard Error of the Mean
     confidence_level = 0.95
-    degrees_of_freedom = len(precision) - 1
+    degrees_of_freedom = values.shape[1] - 1
 
     # Calculate t-critical for two-tailed test
     t_critical = t.ppf((1 + confidence_level) / 2, degrees_of_freedom)
 
-    # Calculate margin of error
+    # Calculate margin of error for each point
     margin_of_error = t_critical * sem
 
     # Lower and upper confidence intervals
-    ci_lower = mean - margin_of_error
-    ci_upper = mean + margin_of_error
+    ci_lower = mean_values - margin_of_error
+    ci_upper = mean_values + margin_of_error
 
     return ci_lower, ci_upper
 
