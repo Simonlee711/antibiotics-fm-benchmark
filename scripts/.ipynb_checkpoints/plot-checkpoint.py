@@ -4,7 +4,7 @@ from scipy.stats import t
 
 def plot_roc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20)):
     """
-    Plots ROC curves for multiple models and antibiotics.
+    Plots ROC curves for multiple models and antibiotics with confidence intervals.
 
     Parameters:
     - antibiotics: List of antibiotics
@@ -15,24 +15,20 @@ def plot_roc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20)):
     Returns:
     - Matplotlib figure with ROC curves
     """
-    # Calculate number of rows and columns needed for subplots
     n = len(antibiotics)
-    cols = 5
+    cols = 4
     rows = n // cols + (1 if n % cols > 0 else 0)
     
-    # Create figure and axes objects
     fig, axs = plt.subplots(rows, cols, figsize=figsize, squeeze=False)
     
-    # Loop through all antibiotics and plot each on a subplot
     for i, antibiotic in enumerate(antibiotics):
         row, col = divmod(i, cols)
         ax = axs[row, col]
         
-        # Gather all TPR (True Positive Rate) and FPR (False Positive Rate) data for this antibiotic to calculate confidence intervals
         all_tpr = [dictionary[antibiotic]['Test Metrics']['tpr'] for dictionary, _ in dictionaries]
         all_fpr = [dictionary[antibiotic]['Test Metrics']['fpr'] for dictionary, _ in dictionaries]
-
-        mean_fpr = np.linspace(0, 1, 100)  # Common FPR grid
+        
+        mean_fpr = np.linspace(0, 1, 100)
         interp_tpr = [np.interp(mean_fpr, fpr, tpr) for fpr, tpr in zip(all_fpr, all_tpr)]
         
         ci_lower, ci_upper = calculate_confidence_interval_curves(interp_tpr)
@@ -41,14 +37,11 @@ def plot_roc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20)):
             tpr, fpr = dictionary[antibiotic]['Test Metrics']['tpr'], dictionary[antibiotic]['Test Metrics']['fpr']
             roc_auc = dictionary[antibiotic]['Test Metrics']['ROC AUC']
             
-            # Plot ROC curve
             line_color = model_colors[name]
             ax.plot(fpr, tpr, linestyle='--', color=line_color, label=f'{name} (ROC AUC = {roc_auc:.4f})')
-            
-        # Fill between for confidence intervals using a neutral color
-        ax.fill_between(mean_fpr, ci_lower, ci_upper, color='grey', alpha=0.3)
         
-        # Set plot details
+        ax.fill_between(mean_fpr, ci_lower, ci_upper, color=line_color, alpha=0.3)
+        
         ax.legend(loc='best')
         ax.set_title(f'{antibiotic} - ROC Curves')
         ax.set_xlabel('False Positive Rate')
@@ -56,13 +49,13 @@ def plot_roc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20)):
         ax.set_xlim([0, 1])
         ax.set_ylim([0, 1])
 
-    # Adjust layout to prevent overlap
     plt.tight_layout()
     plt.show()
 
+
 def plot_auprc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20)):
     """
-    Plots AUPRC curves for multiple models and antibiotics.
+    Plots AUPRC curves for multiple models and antibiotics with confidence intervals.
 
     Parameters:
     - antibiotics: List of antibiotics
@@ -75,7 +68,7 @@ def plot_auprc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20))
     """
     # Calculate number of rows and columns needed for subplots
     n = len(antibiotics)
-    cols = 5
+    cols = 4
     rows = n // cols + (1 if n % cols > 0 else 0)
     
     # Create figure and axes objects
@@ -88,8 +81,12 @@ def plot_auprc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20))
         
         # Gather all precision data for this antibiotic to calculate confidence intervals
         all_precision = [dictionary[antibiotic]['Test Metrics']['precision'] for dictionary, _ in dictionaries]
+        all_recall = [dictionary[antibiotic]['Test Metrics']['recall'] for dictionary, _ in dictionaries]
+
+        mean_recall = np.linspace(0, 1, 100)  # Common recall grid
+        interp_precision = [np.interp(mean_recall, recall, precision) for recall, precision in zip(all_recall, all_precision)]
         
-        ci_lower, ci_upper = calculate_confidence_interval_curves(all_precision)
+        ci_lower, ci_upper = calculate_confidence_interval_curves(interp_precision)
         
         for idx, (dictionary, name) in enumerate(dictionaries):
             results = dictionary[antibiotic]['Test Metrics']
@@ -99,9 +96,9 @@ def plot_auprc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20))
             # Plot Precision-Recall curve
             line_color = model_colors[name]
             ax.plot(recall, precision, linestyle='--', color=line_color, label=f'{name} (PR AUC = {auprc:.4f})')
-            
+        
         # Fill between for confidence intervals using a neutral color
-        ax.fill_between(recall, ci_lower, ci_upper, color='grey', alpha=0.3)
+        ax.fill_between(mean_recall, ci_lower, ci_upper, color=line_color, alpha=0.3)
         
         # Set plot details
         ax.legend(loc='best')
