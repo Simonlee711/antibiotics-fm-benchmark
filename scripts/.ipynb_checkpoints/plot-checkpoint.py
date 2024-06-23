@@ -39,8 +39,7 @@ def plot_roc_curves(antibiotics, dictionaries, model_colors, figsize=(20, 20)):
             
             line_color = model_colors[name]
             ax.plot(fpr, tpr, linestyle='--', color=line_color, label=f'{name} (ROC AUC = {roc_auc:.4f})')
-        
-        ax.fill_between(mean_fpr, ci_lower, ci_upper, color=line_color, alpha=0.3)
+            ax.fill_between(mean_fpr, ci_lower, ci_upper, color=line_color, alpha=0.3)
         
         ax.legend(loc='best')
         ax.set_title(f'{antibiotic} - ROC Curves')
