@@ -12,6 +12,14 @@ The rise of antibiotic-resistant bacteria has been identified as a critical glob
 
 The MIMIC-IV-ED dataset, part of the extensive MIMIC-IV collection, concentrates on emergency department records from a major hospital. It anonymizes and details patient demographics, triage, vitals, tests, medications, and outcomes, aiding research in emergency care and hospital operations. Access follows strict privacy regulations.
 
+# Method
+
+![alt text](image.png)
+
+### Running the code
+
+To replicate our results, run the file benchmark.ipynb
+
 # Foundation Models Benchmarked
 
 | Foundation Model | Source |
