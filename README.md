@@ -14,7 +14,7 @@ The MIMIC-IV-ED dataset, part of the extensive MIMIC-IV collection, concentrates
 
 # Method
 
-![alt text](image.png)
+![alt text](Isolated.png "Method")
 
 ### Running the code
 
