@@ -2,7 +2,7 @@
 # Benchmarking Foundation Models on Antibiotic Susceptibility
 
 ---
-[![Overleaf](https://img.shields.io/badge/Overleaf-Bechmarking%20Foundation%20Models%20Antibiotics-lightblue.svg)]([https://paperswithcode.com/paper/multimodal-clinical-pseudo-notes-for](https://www.overleaf.com/3549673182rsnwhpnppmvt#9af1b1))
+[![Overleaf](https://chianglab.github.io/antibiotics-benchmark/)]([https://chianglab.github.io/antibiotics-benchmark/)
 
 # Abstract
 
@@ -14,8 +14,7 @@ The MIMIC-IV-ED dataset, part of the extensive MIMIC-IV collection, concentrates
 
 # Method
 
-![image info](./Desktop/Method.png)
-
+![Method](Method.png)
 ### Running the code
 
 To replicate our results, run the file benchmark.ipynb
