@@ -14,7 +14,7 @@ The MIMIC-IV-ED dataset, part of the extensive MIMIC-IV collection, concentrates
 
 # Method
 
-![Method](Method.png)
+![](Method.png)
 ### Running the code
 
 To replicate our results, run the file benchmark.ipynb
