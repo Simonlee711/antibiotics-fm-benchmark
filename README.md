@@ -32,7 +32,16 @@ The rise of antibiotic-resistant bacteria has been identified as a critical glob
 | Bio-Megatron | https://huggingface.co/EMBO/BioMegatron345mUncased |
 | LinkBERT  | https://huggingface.co/michiyasunaga/LinkBERT-large  |
 | distil-bert  | https://huggingface.co/docs/transformers/en/model_doc/distilbert  |
-| clinicalt5 | https://huggingface.co/xyla/Clinical-T5-Large |
+| Bluebert | https://huggingface.co/bionlp/bluebert_pubmed_mimic_uncased_L-12_H-768_A-12 |
+| BioBERT | https://huggingface.co/pritamdeka/BioBert-PubMed200kRCT |
+| PubMedBERT | https://huggingface.co/NeuML/pubmedbert-base-embeddings |
+| Gatotron | https://huggingface.co/UFNLP/gatortronS |
+| BiomedRoBERTa | https://huggingface.co/allenai/biomed_roberta_base |
+| Bio+ClinicalBERT | https://huggingface.co/emilyalsentzer/Bio_ClinicalBERT |
+| SciBERT | https://huggingface.co/allenai/scibert_scivocab_uncased |
+| BioLM | https://huggingface.co/EMBO/bio-lm |
+| RadBERT | https://huggingface.co/StanfordAIMI/RadBERT |
+| LinkBERT | https://huggingface.co/michiyasunaga/LinkBERT-large |
 
 
 
