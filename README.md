@@ -14,7 +14,7 @@ The MIMIC-IV-ED dataset, part of the extensive MIMIC-IV collection, concentrates
 
 # Method
 
-![Method](/Users/helio/pictures/Method.png)
+![Method](../pictures/Method.png)
 
 ### Running the code
 
