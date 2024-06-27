@@ -2,7 +2,7 @@
 # Benchmarking Foundation Models on Antibiotic Susceptibility
 
 ---
-[![Overleaf](https://chianglab.github.io/antibiotics-benchmark/)]([https://chianglab.github.io/antibiotics-benchmark/)
+![GitHub](https://img.shields.io/github/license/Simonlee711/antibiotics-fm-benchmark) [![Project Page](https://img.shields.io/badge/project-page-red.svg)](https://chianglab.github.io/antibiotics-benchmark/)
 
 # Abstract
 
@@ -14,7 +14,7 @@ The MIMIC-IV-ED dataset, part of the extensive MIMIC-IV collection, concentrates
 
 # Method
 
-![Method](../pictures/Method.png)
+![Method](./pictures/Method.png)
 
 ### Running the code
 
