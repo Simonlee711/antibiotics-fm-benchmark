@@ -29,7 +29,7 @@ def encode_texts(model_name, texts):
 def encode_texts_biolm(model_name, texts):
     tokenizer = AutoTokenizer.from_pretrained("roberta-base", max_len=512)
     model = AutoModel.from_pretrained(model_name)
-    model.eval()
+    model.train()
     if torch.cuda.is_available():
         model.to('cuda')
     embeddings = []
