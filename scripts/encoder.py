@@ -11,7 +11,7 @@ import numpy as np
 def encode_texts(model_name, texts):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModel.from_pretrained(model_name)
-    model.eval()
+    model.train()
     if torch.cuda.is_available():
         model.to('cuda')
     embeddings = []
