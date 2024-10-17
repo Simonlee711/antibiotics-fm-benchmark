@@ -85,7 +85,7 @@ def evaluate_antibiotics_with_confidence_intervals(X_train, X_test, train, test,
     - A dictionary containing evaluation results and confidence intervals for each antibiotic.
     """
     results = {}
-    for antibiotic in tqdm(antibiotics,desc="Iterating through Antibiotics Progress: "):
+    for antibiotic in tqdm(antibiotics, desc="Iterating through Antibiotics Progress: "):
         y_train = train[antibiotic].astype(int).reset_index(drop=True)
         y_test = test[antibiotic].astype(int).reset_index(drop=True)
         
@@ -98,8 +98,7 @@ def evaluate_antibiotics_with_confidence_intervals(X_train, X_test, train, test,
 
         # Initial evaluation
         precision, recall, thresholds = precision_recall_curve(y_test, y_test_proba)
-        f1_scores = 2 * recall * precision / (recall + precision)
-        f1_scores = np.nan_to_num(f1_scores)
+        f1_scores = 2 * recall * precision / (np.maximum(recall + precision, np.finfo(float).eps))
         optimal_idx = np.argmax(f1_scores)
         optimal_threshold = thresholds[optimal_idx]
         optimal_f1 = f1_scores[optimal_idx]
@@ -109,6 +108,11 @@ def evaluate_antibiotics_with_confidence_intervals(X_train, X_test, train, test,
         prc_auc_test = average_precision_score(y_test, y_test_proba)
         fpr, tpr, _ = roc_curve(y_test, y_test_proba)
         auprc = auc(recall, precision)
+        
+        # Compute confusion matrix and extract false positives and false negatives
+        tn, fp, fn, tp = confusion_matrix(y_test, y_test_pred).ravel()
+        false_positives = fp
+        false_negatives = fn
 
         # Bootstrap confidence intervals
         roc_aucs = []
@@ -117,16 +121,24 @@ def evaluate_antibiotics_with_confidence_intervals(X_train, X_test, train, test,
 
         for _ in range(n_bootstraps):
             indices = resample(np.arange(len(y_test)), replace=True)
-            y_test_resampled = y_test[indices]
+            y_test_resampled = y_test.iloc[indices]
             y_test_proba_resampled = y_test_proba[indices]
+
+            # Check if both classes are present
+            if len(np.unique(y_test_resampled)) < 2:
+                # Skip this bootstrap sample
+                continue
 
             roc_aucs.append(roc_auc_score(y_test_resampled, y_test_proba_resampled))
             pr, rc, _ = precision_recall_curve(y_test_resampled, y_test_proba_resampled)
             prc_aucs.append(auc(rc, pr))
-            f1 = 2 * rc * pr / (np.maximum(rc + pr, np.finfo(float).eps))
+            f1 = 2 * pr * rc / (np.maximum(pr + rc, np.finfo(float).eps))
             f1_scores_list.append(np.max(f1))
 
-        # Store results including confidence intervals
+        # Adjust confidence intervals if some bootstrap samples were skipped
+        effective_bootstraps = len(roc_aucs)
+
+        # Store results including false positives and false negatives
         results[antibiotic] = {
             'Optimal Threshold': optimal_threshold,
             'Test Metrics': {
@@ -134,6 +146,10 @@ def evaluate_antibiotics_with_confidence_intervals(X_train, X_test, train, test,
                 'Matthews Correlation Coefficient': mcc_test,
                 'ROC AUC': roc_auc_test,
                 'PRC AUC': prc_auc_test,
+                'False Positives': false_positives,
+                'False Negatives': false_negatives,
+                'True Positives': tp,
+                'True Negatives': tn,
                 'fpr': fpr,
                 'tpr': tpr,
                 'auprc': auprc,
@@ -141,13 +157,16 @@ def evaluate_antibiotics_with_confidence_intervals(X_train, X_test, train, test,
                 'recall': recall
             },
             'Confidence Intervals': {
-                'ROC AUC': {'Mean': np.mean(roc_aucs), '95% CI': np.percentile(roc_aucs, [2.5, 97.5])},
-                'PRC AUC': {'Mean': np.mean(prc_aucs), '95% CI': np.percentile(prc_aucs, [2.5, 97.5])},
-                'F1 Score': {'Mean': np.mean(f1_scores_list), '95% CI': np.percentile(f1_scores_list, [2.5, 97.5])}
+                'ROC AUC': {'Mean': np.mean(roc_aucs), '95% CI': np.percentile(roc_aucs, [2.5, 97.5])} if roc_aucs else None,
+                'PRC AUC': {'Mean': np.mean(prc_aucs), '95% CI': np.percentile(prc_aucs, [2.5, 97.5])} if prc_aucs else None,
+                'F1 Score': {'Mean': np.mean(f1_scores_list), '95% CI': np.percentile(f1_scores_list, [2.5, 97.5])} if f1_scores_list else None,
+                'Effective Bootstraps': effective_bootstraps
             }
         }
-    
+        
     return results
+
+
 
 def print_results(results):
     # Print results
@@ -172,9 +191,15 @@ def print_results(results):
         prc_auc_ci_upper = res['Confidence Intervals']['PRC AUC']['95% CI'][1]
         prc_auc_error = (prc_auc_ci_upper - prc_auc_ci_lower) / 2
 
-        # Print the metrics with confidence intervals
+        # Get false positives and false negatives
+        false_positives = res['Test Metrics']['False Positives']
+        false_negatives = res['Test Metrics']['False Negatives']
+
+        # Print the metrics with confidence intervals and false positives/negatives
         print(f"  Test - F1: {f1_mean:.4f} +/- {f1_error:.4f}, MCC: {res['Test Metrics']['Matthews Correlation Coefficient']:.4f}, "
               f"ROC-AUC: {roc_auc_mean:.4f} +/- {roc_auc_error:.4f}, PRC-AUC: {prc_auc_mean:.4f} +/- {prc_auc_error:.4f}")
+        print(f"  False Positives: {false_positives}, False Negatives: {false_negatives}\n")
+
 
 
 
