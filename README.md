@@ -4,49 +4,23 @@
 ---
 ![GitHub](https://img.shields.io/github/license/Simonlee711/antibiotics-fm-benchmark) [![Project Page](https://img.shields.io/badge/project-page-red.svg)](https://chianglab.github.io/antibiotics-benchmark/)
 
-# Abstract
+## Overview
+This study evaluates the effectiveness of clinical decision support systems powered by biomedical language models in enhancing antibiotic stewardship using electronic health records (EHRs). We focus on predicting the effectiveness of various antibiotics for individual patients, with a strong emphasis on model interpretability to understand decision-making processes.
 
-The rise of antibiotic-resistant bacteria has been identified as a critical global healthcare crisis that compromises the efficacy of essential antibiotics. This crisis is largely driven by the inappropriate and excessive use of antibiotics, which leads to increased bacterial resistance. In response, clinical decision support systems integrated with electronic health records (EHRs) have emerged as a promising solution. These systems employ machine learning models to improve antibiotic stewardship by providing actionable, data-driven insights. This study therefore evaluates pre-trained language models for predicting antibiotic susceptibility, using several open-source models available on the Hugging Face platform. Despite the abundance of models and ongoing advancements in the field, a consensus on the most effective model for encoding clinical knowledge remains unclear.
+## Key Features
+- **Biomedical Language Models**: Utilization of state-of-the-art language models tailored for biomedical applications.
+- **Antibiotic Effectiveness Prediction**: Targeted prediction for eight different antibiotics, assessing their suitability for patient treatments based on clinical data.
+- **Interpretability**: Detailed analysis of model decision-making processes to identify strengths and limitations, aiding clinical understanding and application.
 
-# Data
+## Data
+The study uses the MIMIC-IV-ED dataset, which includes comprehensive records from emergency department (ED) visits, providing a rich source for model training and evaluation.
 
-The MIMIC-IV-ED dataset, part of the extensive MIMIC-IV collection, concentrates on emergency department records from a major hospital. It anonymizes and details patient demographics, triage, vitals, tests, medications, and outcomes, aiding research in emergency care and hospital operations. Access follows strict privacy regulations.
+## Results
+The models demonstrate potential in accurately predicting antibiotic effectiveness, with insights into their operational strengths and limitations detailed in the analysis. Results suggest significant promise for AI in supporting clinical decisions, with necessary improvements for deployment in practical settings.
 
-# Method
+## Contributing
+Contributions to the project are welcome. Please refer to `CONTRIBUTING.md` for guidelines on how to make contributions.
 
-![Method](./pictures/Method.png)
+## License
+This project is licensed under the MIT License - see the `LICENSE` file for details.
 
-### Running the code
-
-To replicate our results, run the file benchmark.ipynb
-
-# Foundation Models Benchmarked
-
-| Foundation Model | Source |
-|-----------------|-----------------|
-| BioBERT  | https://huggingface.co/dmis-lab/biobert-v1.1  |
-| ClinicalBERT  | https://huggingface.co/medicalai/ClinicalBERT |
-| MedBERT  | https://huggingface.co/Charangan/MedBERT  |
-| RadBERT  | https://huggingface.co/StanfordAIMI/RadBERT  |
-| Bio-LM   | https://huggingface.co/EMBO/bio-lm |
-| Bio-Megatron | https://huggingface.co/EMBO/BioMegatron345mUncased |
-| LinkBERT  | https://huggingface.co/michiyasunaga/LinkBERT-large  |
-| distil-bert  | https://huggingface.co/docs/transformers/en/model_doc/distilbert  |
-| Bluebert | https://huggingface.co/bionlp/bluebert_pubmed_mimic_uncased_L-12_H-768_A-12 |
-| BioBERT | https://huggingface.co/pritamdeka/BioBert-PubMed200kRCT |
-| PubMedBERT | https://huggingface.co/NeuML/pubmedbert-base-embeddings |
-| Gatotron | https://huggingface.co/UFNLP/gatortronS |
-| BiomedRoBERTa | https://huggingface.co/allenai/biomed_roberta_base |
-| Bio+ClinicalBERT | https://huggingface.co/emilyalsentzer/Bio_ClinicalBERT |
-| SciBERT | https://huggingface.co/allenai/scibert_scivocab_uncased |
-| BioLM | https://huggingface.co/EMBO/bio-lm |
-| RadBERT | https://huggingface.co/StanfordAIMI/RadBERT |
-| LinkBERT | https://huggingface.co/michiyasunaga/LinkBERT-large |
-
-
-
----
-Authors:
-- Helio Halperin
-- Simon Lee
-- Jeffrey Chiang
